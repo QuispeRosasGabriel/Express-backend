@@ -3,6 +3,10 @@ const app = express();
 const Usuario = require("../models/usuario");
 
 // rutas
+// ===============================
+//obtener todos los usuarios
+// ===============================
+
 app.get("/", (req, res, next) => {
   //condicionando la consulta
   Usuario.find({}, "nombre email img role").exec((err, usuarios) => {
@@ -19,5 +23,9 @@ app.get("/", (req, res, next) => {
     });
   });
 });
+// ===============================
+//crear nuevo usuario
+// ===============================
+app.post("/", (req, res, next) => {});
 
 module.exports = app;
