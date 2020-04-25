@@ -26,6 +26,12 @@ app.get("/", (req, res, next) => {
 // ===============================
 //crear nuevo usuario
 // ===============================
-app.post("/", (req, res, next) => {});
+app.post("/", (req, res, next) => {
+  let body = request.body;
+  res.status(200).json({
+    ok: true,
+    body: body,
+  });
+});
 
 module.exports = app;
