@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
-//body parser
+// Body Parser
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -22,10 +22,10 @@ mongoose.connection.openUri(
 );
 
 //rutas
-app.use("/users", userRoutes);
+app.use("/usuario", userRoutes);
 app.use("/", appRoutes);
 
 //escuchar express
 app.listen(3000, () => {
-  console.log("Express funciona:online");
+  console.log("Express server puerto 3000: \x1b[32m%s\x1b[0m", "online");
 });

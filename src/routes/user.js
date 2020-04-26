@@ -1,7 +1,7 @@
 const express = require("express");
-const app = express();
 const Usuario = require("../models/usuario");
 
+const app = express();
 // rutas
 // ===============================
 //obtener todos los usuarios
@@ -26,11 +26,28 @@ app.get("/", (req, res, next) => {
 // ===============================
 //crear nuevo usuario
 // ===============================
-app.post("/", (req, res, next) => {
-  let body = request.body;
-  res.status(200).json({
-    ok: true,
-    body: body,
+app.post("/", (req, res) => {
+  var body = req.body;
+  var usuario = new Usuario({
+    nombre: body.nombre,
+    email: body.email,
+    password: body.password,
+    img: body.img,
+    role: body.role,
+  });
+
+  usuario.save((err, usuarioGuardado) => {
+    if (err) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: "Error al crear usuario",
+        errors: err,
+      });
+    }
+    res.status(201).json({
+      ok: true,
+      usuario: usuarioGuardado,
+    });
   });
 });
 
