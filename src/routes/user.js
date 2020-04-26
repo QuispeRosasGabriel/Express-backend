@@ -92,7 +92,7 @@ app.post("/", (req, res) => {
       });
     }
 
-    if (!usuarioBorrado) {
+    if (!usuarioGuardado) {
       return res.status(400).json({
         ok: false,
         mensaje: `El usuario con el id ${id} no existe`,
