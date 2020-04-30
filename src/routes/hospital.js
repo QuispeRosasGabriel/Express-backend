@@ -1,9 +1,6 @@
 const express = require("express");
 const Hospital = require("../models/hospital");
 
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-
 const mdAuth = require("../middleware/auth");
 
 const app = express();
@@ -55,8 +52,8 @@ app.put("/:id", mdAuth.verificaToken, (req, res) => {
     }
 
     hospital.nombre = body.nombre;
-    hospital.img = body.img;
-    hospital.usuario = body.usuario;
+    //grabar que usuario hizo el cambio
+    hospital.usuario = req.usuario._id;
 
     hospital.save((err, hospitalGuardado) => {
       if (err) {
@@ -75,46 +72,57 @@ app.put("/:id", mdAuth.verificaToken, (req, res) => {
 });
 
 // ===============================
-//Actualizar hospital
+//crear nuevo hospital
 // ===============================
-
-app.put("/:id", mdAuth.verificaToken, (req, res) => {
-  var id = req.params.id;
+app.post("/", mdAuth.verificaToken, (req, res) => {
   var body = req.body;
+  var hospital = new Hospital({
+    nombre: body.nombre,
+    //obtener id del usuario
+    usuario: req.usuario._id,
+  });
 
-  //verificar si un hospital tiene ese id
-  Hospital.findById(id, (err, hospital) => {
+  hospital.save((err, hospitalGuardado) => {
     if (err) {
-      return res.status(500).json({
+      return res.status(400).json({
         ok: false,
-        mensaje: "Error al buscar ese hospital",
+        mensaje: "Error al crear hospital",
         errors: err,
       });
     }
 
-    if (!hospital) {
+    res.status(201).json({
+      ok: true,
+      hospital: hospitalGuardado,
+    });
+  });
+});
+
+// ===============================
+//Eliminar un hospital
+// ===============================
+app.delete("/:id", mdAuth.verificaToken, (req, res) => {
+  var id = req.params.id;
+  Hospital.findByIdAndRemove(id, (err, hospitalBorrado) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        mensaje: "Error al borrar el hospital",
+        errors: err,
+      });
+    }
+
+    if (!hospitalBorrado) {
       return res.status(400).json({
         ok: false,
         mensaje: `El hospital con el id ${id} no existe`,
         errors: { message: "No existe un hospital con ese id" },
       });
     }
-    hospital.nombre = body.nombre;
-    hospital.img = body.img;
-    hospital.usuario = body.usuario;
 
-    hospital.save((err, hospitalGuardado) => {
-      if (err) {
-        return res.status(400).json({
-          ok: false,
-          mensaje: "Error al actualizar ese hospital",
-          errors: err,
-        });
-      }
-      res.status(200).json({
-        ok: true,
-        hospital: hospitalGuardado,
-      });
+    res.status(200).json({
+      ok: true,
+      usuario: hospitalBorrado,
     });
   });
 });
