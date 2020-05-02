@@ -12,20 +12,26 @@ const app = express();
 // ===============================
 
 app.get("/", (req, res, next) => {
+  var desde = req.params.desde || 0;
+  desde = Number(desde);
   //condicionando la consulta
-  Usuario.find({}, "nombre email img role").exec((err, usuarios) => {
-    if (err) {
-      return res.status(500).json({
-        ok: false,
-        mensaje: "Error en base de datos",
-        errors: err,
+  Usuario.find({}, "nombre email img role")
+    //paginando api
+    .skip(desde)
+    .limit(5)
+    .exec((err, usuarios) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          mensaje: "Error en base de datos",
+          errors: err,
+        });
+      }
+      res.status(200).json({
+        ok: true,
+        usuarios: usuarios,
       });
-    }
-    res.status(200).json({
-      ok: true,
-      usuarios: usuarios,
     });
-  });
 });
 
 // ===============================
