@@ -11,19 +11,21 @@ const app = express();
 
 app.get("/", (req, res) => {
   //listando hospitales
-  Hospital.find({}, "nombre img usuario").exec((err, hospitales) => {
-    if (err) {
-      return res.status(500).json({
-        ok: false,
-        mensaje: "Error en base de datos",
-        errors: err,
+  Hospital.find({})
+    .populate("usuario", "nombre email")
+    .exec((err, hospitales) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          mensaje: "Error en base de datos",
+          errors: err,
+        });
+      }
+      res.status(200).json({
+        ok: true,
+        hospitales: hospitales,
       });
-    }
-    res.status(200).json({
-      ok: true,
-      hospitales: hospitales,
     });
-  });
 });
 
 // ===============================
@@ -71,14 +73,14 @@ app.put("/:id", mdAuth.verificaToken, (req, res) => {
   });
 });
 
-// ===============================
-//crear nuevo hospital
-// ===============================
+// ==========================================
+// Crear un nuevo hospital
+// ==========================================
 app.post("/", mdAuth.verificaToken, (req, res) => {
   var body = req.body;
+
   var hospital = new Hospital({
     nombre: body.nombre,
-    //obtener id del usuario
     usuario: req.usuario._id,
   });
 

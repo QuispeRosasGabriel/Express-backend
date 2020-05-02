@@ -11,19 +11,22 @@ const app = express();
 
 app.get("/", (req, res) => {
   //listando medicos
-  Medico.find({}, "nombre img usuario").exec((err, medicos) => {
-    if (err) {
-      return res.status(500).json({
-        ok: false,
-        mensaje: "Error en base de datos",
-        errors: err,
+  Medico.find({})
+    .populate("usuario", "nombre email")
+    .populate("hospitales")
+    .exec((err, medicos) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          mensaje: "Error en base de datos",
+          errors: err,
+        });
+      }
+      res.status(200).json({
+        ok: true,
+        medicos: medicos,
       });
-    }
-    res.status(200).json({
-      ok: true,
-      medicos: medicos,
     });
-  });
 });
 
 // ===============================
@@ -74,9 +77,9 @@ app.put("/:id", mdAuth.verificaToken, (req, res) => {
 // ===============================
 app.post("/", mdAuth.verificaToken, (req, res) => {
   var body = req.body;
+
   var medico = new Medico({
     nombre: body.nombre,
-    //obtener id del usuario
     usuario: req.usuario._id,
     hospital: body.hospital,
   });
