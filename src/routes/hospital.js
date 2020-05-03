@@ -10,8 +10,12 @@ const app = express();
 // ===============================
 
 app.get("/", (req, res) => {
+  var desde = req.query.desde || 0;
+  desde = Number(desde);
   //listando hospitales
   Hospital.find({})
+    .skip(desde)
+    .limit(5)
     .populate("usuario", "nombre email")
     .exec((err, hospitales) => {
       if (err) {
@@ -21,9 +25,12 @@ app.get("/", (req, res) => {
           errors: err,
         });
       }
-      res.status(200).json({
-        ok: true,
-        hospitales: hospitales,
+      Hospital.count({}, (err, conteo) => {
+        res.status(200).json({
+          ok: true,
+          hospitales: hospitales,
+          total: conteo,
+        });
       });
     });
 });

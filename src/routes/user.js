@@ -12,7 +12,7 @@ const app = express();
 // ===============================
 
 app.get("/", (req, res, next) => {
-  var desde = req.params.desde || 0;
+  var desde = req.query.desde || 0;
   desde = Number(desde);
   //condicionando la consulta
   Usuario.find({}, "nombre email img role")
@@ -27,9 +27,12 @@ app.get("/", (req, res, next) => {
           errors: err,
         });
       }
-      res.status(200).json({
-        ok: true,
-        usuarios: usuarios,
+      Usuario.count({}, (err, conteo) => {
+        res.status(200).json({
+          ok: true,
+          usuarios: usuarios,
+          total: conteo,
+        });
       });
     });
 });
