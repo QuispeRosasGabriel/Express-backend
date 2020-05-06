@@ -9,7 +9,13 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+//server index config
+// var serveIndex = require("serve-index");
+// app.use(express.static(__dirname + "/"));
+// app.use("/uploads", serveIndex(__dirname + "/uploads"));
+
 //importar rutas
+const imagenesRoutes = require("./src/routes/imagenes");
 const uploadRoutes = require("./src/routes/upload");
 const busquedaRoutes = require("./src/routes/busqueda");
 const medicoRoutes = require("./src/routes/medico");
@@ -27,6 +33,7 @@ mongoose.connection.openUri(
 );
 
 //rutas
+app.use("/img", imagenesRoutes);
 app.use("/upload", uploadRoutes);
 app.use("/busqueda", busquedaRoutes);
 app.use("/hospital", hospitalRoutes);
