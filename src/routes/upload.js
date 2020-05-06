@@ -4,7 +4,10 @@ const fileUpload = require("express-fileupload");
 const app = express();
 app.use(fileUpload());
 // rutas
-app.put("/", (req, res, next) => {
+app.put("/:tipo/:id", (req, res, next) => {
+  var tipo = req.params.tipo;
+  var id = req.params.id;
+
   if (!req.files) {
     return res.status(500).json({
       ok: false,
@@ -31,9 +34,17 @@ app.put("/", (req, res, next) => {
       },
     });
   }
+
+  //crear nombre de archivo personalizado
+  var nombreArchivo = `${id}-${new Date().getMilliseconds()}.${extensionArchivo} `;
+
+  //mover archivo de espacio temporal hacia direccion particular
+  var path;
+
   res.status(200).json({
     ok: true,
     mensaje: "Peticion Realizada correctamente",
+    nombreArchivo: nombreArchivo,
   });
 });
 
