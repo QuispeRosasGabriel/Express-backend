@@ -8,6 +8,16 @@ app.put("/:tipo/:id", (req, res, next) => {
   var tipo = req.params.tipo;
   var id = req.params.id;
 
+  //tipos de coleccion
+  var tiposValidos = ["hospitales", "medicos", "usuarios"];
+  if (tiposValidos.indexOf(tipo) < 0) {
+    return res.status(400).json({
+      ok: false,
+      mensaje: "Tipo de coleccion no es valida",
+      error: { message: "Tipo de coleccion no es valida" },
+    });
+  }
+
   if (!req.files) {
     return res.status(500).json({
       ok: false,
@@ -36,15 +46,23 @@ app.put("/:tipo/:id", (req, res, next) => {
   }
 
   //crear nombre de archivo personalizado
-  var nombreArchivo = `${id}-${new Date().getMilliseconds()}.${extensionArchivo} `;
+  var nombreArchivo = `${id}-${new Date().getMilliseconds()}.${extensionArchivo}`;
 
   //mover archivo de espacio temporal hacia direccion particular
-  var path;
-
-  res.status(200).json({
-    ok: true,
-    mensaje: "Peticion Realizada correctamente",
-    nombreArchivo: nombreArchivo,
+  var path = `./uploads/${tipo}/${nombreArchivo}`;
+  archivo.mv(path, (err) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        mensaje: "Error al mover archivo",
+        error: err,
+      });
+    }
+    res.status(200).json({
+      ok: true,
+      mensaje: "Archivo movido",
+      nombreArchivo: nombreArchivo,
+    });
   });
 });
 
