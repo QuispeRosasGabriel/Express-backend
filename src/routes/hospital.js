@@ -36,6 +36,35 @@ app.get("/", (req, res) => {
 });
 
 // ===============================
+//obtener hospital por id
+// ===============================
+app.get("/:id", (req, res) => {
+  var id = req.params.id;
+  Hospital.findById(id)
+    .populate("usuario", "nombre img email")
+    .exec((err, hospital) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          mensaje: "Error al buscar hospital",
+          errors: err,
+        });
+      }
+      if (!hospital) {
+        return res.status(400).json({
+          ok: false,
+          mensaje: `El hospital con el id: ${id} no se puede encontrar`,
+          errors: err,
+        });
+      }
+      res.status(200).json({
+        ok: true,
+        hospital: hospital,
+      });
+    });
+});
+
+// ===============================
 //Actualizar  info hospital
 // ===============================
 app.put("/:id", mdAuth.verificaToken, (req, res) => {
