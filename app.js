@@ -46,6 +46,7 @@ mongoose.connection.openUri(
 app.use("/img", imagenesRoutes);
 app.use("/upload", uploadRoutes);
 app.use("/busqueda", busquedaRoutes);
+app.use("/medico", medicoRoutes);
 app.use("/hospital", hospitalRoutes);
 app.use("/login", loginRoutes);
 app.use("/usuario", userRoutes);

@@ -37,6 +37,37 @@ app.get("/", (req, res) => {
 });
 
 // ===============================
+//obtener medico
+// ===============================
+
+app.get("/:id", (req, res) => {
+  var id = req.params.id;
+  Medico.findById(id)
+    .populate("usuario", "nombre email img")
+    .populate("hospitales", "nombre img usuario")
+    .exec((err, medico) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          mensaje: "Error al buscar el medico",
+          errors: err,
+        });
+      }
+      if (!medico) {
+        return res.status(400).json({
+          ok: false,
+          mensaje: `El medico con el id ${id} no existe`,
+          errors: { message: "No existe un medico con ese id" },
+        });
+      }
+      res.status(200).json({
+        ok: true,
+        medico: medico,
+      });
+    });
+});
+
+// ===============================
 //Actualizar  info medico
 // ===============================
 app.put("/:id", mdAuth.verificaToken, (req, res) => {
