@@ -3,9 +3,28 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Usuario = require("../models/usuario");
 const SEED = require("../config/config").SEED;
+const mdAuth = require("../middleware/auth");
 
 const app = express();
 
+//====================================
+//Renovar Token
+//====================================
+app.get("/renuevatoken", mdAuth.verificaToken, (req, res) => {
+  var usuario = req.usuario;
+  var token = jwt.sign({ usuario: usuario }, SEED, {
+    expiresIn: 14400,
+  });
+
+  return res.status(200).json({
+    ok: true,
+    token: token,
+  });
+});
+
+//====================================
+//Autenticacion
+//====================================
 app.post("/", (req, res) => {
   var body = req.body;
 
